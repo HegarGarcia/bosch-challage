@@ -28,17 +28,28 @@ app.post('/webhook', (req, res) => {
   keyword = translatePart(keyword);
   var arrayInfo = getParts(vehicle, keyword);
   console.log(arrayInfo);
-  
+  let textObjectResp = `Resultados para la pieza: ${arrayInfo[0].partName}. Vehiculo: ${arrayInfo[0].vehicleName}. Branch ${arrayInfo[0].branchName}`
   const response = {
-    fulfillmentText: '',
-    fulfillmentMessages: [
-      {
-        text: {
-          text: [JSON.stringify(queryParams)],
-        },
-      },
-    ],
+   
     source: '',
+    "facebook": {
+      "attachment":{
+        "type":"template",
+        "payload":{
+          "template_type":"button",
+          "text": textObjectResp,
+          "buttons":[
+            {
+              "url":arrayInfo[0].partsTechCatalogURL,
+              "title":"Ver en catalogo.",
+            },{
+              "title":"gracias",
+              "payload": "ty"
+            }
+          ]
+        }
+      }
+    }
   };
   console.log(vehicle);
   res.json(response);

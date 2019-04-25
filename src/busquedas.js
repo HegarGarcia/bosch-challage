@@ -43,7 +43,9 @@ module.exports = {
         let searchParams = {
             vehicleParams: vehicleParams,
             keyword: keyword
-        }
+        };
+
+        console.log('Search serachParam', JSON.stringify({searchParams}));
          return await fetch('https://api.beta.partstech.com/catalog/search', {
             method: 'post',
             body:    JSON.stringify({searchParams}),
@@ -53,18 +55,20 @@ module.exports = {
             },
         })
         .then( json => {
-            json = JSON.stringify(json);
-            console.log("Dis is my json example");
-            let myResponseArray = json.parts.map( x => {
-                return {
-                    partName: x.partName,
-                    partsTechCatalogURL: x.partsTechCatalogURL,
-                    brandName: x.brand.brandName,
-                    vehicleName: x.vehicleName
-                }
-            });
-    
-            return myResponseArray;
+            if(json['parts'])
+            {
+                console.log("This is my json example", json);
+                let myResponseArray = json.parts.map( x => {
+                    return {
+                        partName: x.partName,
+                        partsTechCatalogURL: x.partsTechCatalogURL,
+                        brandName: x.brand.brandName,
+                        vehicleName: x.vehicleName
+                    }
+                });
+        
+                return myResponseArray;
+            }
         })
         .catch(err => {
             console.log(err);
