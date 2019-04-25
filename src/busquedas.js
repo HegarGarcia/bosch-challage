@@ -71,7 +71,7 @@ module.exports = {
     
     translatePart: async function(partName) {
         let transText = partName;
-        return await translate.getText(transText,{to: 'en-EN'}).then(function(text){
+        return await translate.getText(transText,{to: 'us-US'}).then(function(text){
             return text;
         });
     
