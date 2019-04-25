@@ -12,14 +12,14 @@ app.use(bodyParser.json());
 
 app.post('/webhook', (req, res) => {
   console.log('Web Hooked');
-  const { parameters } = req.body.queryResult;
+  const { parameters: queryParams } = req.body.queryResult;
 
   const response = {
-    fulfillmentText: 'Hola',
+    fulfillmentText: '',
     fulfillmentMessages: [
       {
         text: {
-          text: [JSON.stringify(parameters)],
+          text: [JSON.stringify(queryParams)],
         },
       },
     ],
