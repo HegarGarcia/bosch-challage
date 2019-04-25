@@ -19,7 +19,7 @@ app.post('/webhook', (req, res) => {
 
   var vehicle = {
     year: queryParams['car-maker'],
-    model: queryParams['car-model'],
+    model: queryParams['car-model'][0],
     submodel: queryParams['car-submodel']
   };
 
