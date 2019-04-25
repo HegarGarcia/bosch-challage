@@ -52,8 +52,9 @@ module.exports = {
                 "Authorization": `Bearer ${TokenGen.token}`
             },
         })
-        .then( json =>{
-            console.log(json);
+        .then( json => {
+            json = JSON.stringify(json);
+            console.log("Dis is my json example");
             let myResponseArray = json.parts.map( x => {
                 return {
                     partName: x.partName,
