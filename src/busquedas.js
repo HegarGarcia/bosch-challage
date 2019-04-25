@@ -1,4 +1,4 @@
-var Token = require(__dirname + './token');
+var Token = require('./token');
 var fetch = require('node-fetch');
 
 const TokenGen = new Token();
