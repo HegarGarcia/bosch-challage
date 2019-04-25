@@ -11,7 +11,8 @@ app.use(helmet());
 app.use(bodyParser.json());
 
 app.post('/webhook', (req, res) => {
-  console.log('Web Hooked');
+  console.log('Webhook activated');
+  console.log(req.body);
   const { parameters: queryParams } = req.body.queryResult;
 
   const response = {
