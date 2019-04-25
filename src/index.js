@@ -6,7 +6,7 @@ const helmet = require('helmet');
 const app = express();
 const port = process.env.PORT || 8080;
 
-const {getPartsm, translatePart} = require('./busquedas');
+var {getParts, translatePart} = require('./busquedas');
 
 app.use(morgan('tiny'));
 app.use(helmet());
