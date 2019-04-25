@@ -40,6 +40,8 @@ async function getEngine(vehiculo, trys){
 module.exports = {
     getParts: async function(vehiculo, keyword){
         let vehicleParams = getEngine(vehiculo);
+
+        console.log('parametros del vehiculo', vehicleParams);
         let searchParams = {
             vehicleParams: vehicleParams,
             keyword: keyword
@@ -55,6 +57,8 @@ module.exports = {
             },
         })
         .then( json => {
+            console.log("This is my json example", json);
+
             if(json['parts'])
             {
                 console.log("This is my json example", json);
@@ -71,7 +75,7 @@ module.exports = {
             }
         })
         .catch(err => {
-            console.log(err);
+            console.err(`surgio un error, ${err.messagge}`);
         })
     },
     
