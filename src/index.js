@@ -11,6 +11,7 @@ app.use(helmet());
 app.use(bodyParser.json());
 
 app.post('/webhook', (req, res) => {
+  console.log('Web Hooked');
   const { parameters } = req.body.queryResult;
 
   const response = {
@@ -18,7 +19,7 @@ app.post('/webhook', (req, res) => {
     fulfillmentMessages: [
       {
         text: {
-          text: [parameters],
+          text: [JSON.stringify(parameters)],
         },
       },
     ],
