@@ -37,42 +37,43 @@ async function getEngine(vehiculo, trys){
     
 }
 
-async function getParts(vehiculo, keyword){
-    let vehicleParams = getEngine(vehiculo);
-    let searchParams = {
-        vehicleParams: vehicleParams,
-        keyword: keyword
-    }
-     return await fetch('https://api.beta.partstech.com/catalog/search', {
-        method: 'post',
-        body:    JSON.stringify({searchParams}),
-        headers: { 
-            'Content-Type': 'application/json',
-            "Authorization": `Bearer ${TokenGen.token}`
-        },
-    })
-    .then( json =>{
-        let myResponseArray = json.parts.map( x => {
-            return {
-                partName: x.partName,
-                partsTechCatalogURL: x.partsTechCatalogURL,
-                brandName: x.brand.brandName,
-                vehicleName: x.vehicleName
-            }
+module.exports = {
+    getParts: async function(vehiculo, keyword){
+        let vehicleParams = getEngine(vehiculo);
+        let searchParams = {
+            vehicleParams: vehicleParams,
+            keyword: keyword
+        }
+         return await fetch('https://api.beta.partstech.com/catalog/search', {
+            method: 'post',
+            body:    JSON.stringify({searchParams}),
+            headers: { 
+                'Content-Type': 'application/json',
+                "Authorization": `Bearer ${TokenGen.token}`
+            },
+        })
+        .then( json =>{
+            let myResponseArray = json.parts.map( x => {
+                return {
+                    partName: x.partName,
+                    partsTechCatalogURL: x.partsTechCatalogURL,
+                    brandName: x.brand.brandName,
+                    vehicleName: x.vehicleName
+                }
+            });
+    
+            return myResponseArray;
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    },
+    
+    translatePart: async function(partName) {
+        let transText = partName;
+        return await translate.getText(transText,{to: 'en-EN'}).then(function(text){
+            return text;
         });
-
-        return myResponseArray;
-    })
-    .catch(err => {
-        console.log(err);
-    })
+    
+    }
 }
-
-async function translatePart(partName) {
-    let transText = partName;
-    return await translate.getText(transText,{to: 'en-EN'}).then(function(text){
-        return text;
-    });
-
-}
-module.exports = getParts, translatePart;
