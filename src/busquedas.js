@@ -1,92 +1,81 @@
-const Token = require('./token');
 const fetch = require('node-fetch');
 const translate = require('google-translate-api');
+const Token = require('./token');
 
-var TokenGen = new Token();
+const TokenGen = new Token();
 
-async function getEngine(vehiculo, trys){
-    let VehiculoParams = {
-        yearId: vehiculo.year,
-        makeId: vehiculo.make,
-        modelId: vehiculo.model,
-        submodelId: vehiculo.submodel,
-        engineId: vehiculo.engine
-    };
-    let stringSearch = `?year=${VehiculoParams.yearId}&make=${VehiculoParams.makeId}&model=${VehiculoParams.modelId}&${VehiculoParams.submodelId}`;
-    return await fetch('https://api.beta.partstech.com/taxonomy/vehicles/engines' + stringSearch, {
-        method: 'GET',
-        headers:{
-            "Authorization": `Bearer ${TokenGen.token}`
-        }
+function getEngine(vehiculo, trys = 1) {
+  const VehiculoParams = {
+    yearId: vehiculo.year,
+    makeId: vehiculo.make,
+    modelId: vehiculo.model,
+    submodelId: vehiculo.submodel,
+    engineId: vehiculo.engine,
+    engineParams: {},
+  };
+
+  const queryString = `?year=${VehiculoParams.yearId}&make=${VehiculoParams.makeId}&model=${
+    VehiculoParams.modelId
+  }&submodel${VehiculoParams.submodelId}`;
+
+  return fetch(`https://api.beta.partstech.com/taxonomy/vehicles/engines${queryString}`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${TokenGen.token}`,
+    },
+  })
+    .then(res => res.json())
+    .then((engines) => {
+      if (!engines) {
+        throw new Error('No engine');
+      }
+
+      const choosenOne = engines[0];
+      VehiculoParams.engineParams = choosenOne.engineParams;
+      return VehiculoParams;
     })
-    .then( (json, err) => {
-        if(json){
-            let choosenOne = json[0];
-            VehiculoParams.engineParams = choosenOne.engineParams;
-            return VehiculoParams;
-        }
-    }).catch(err => {
-        if(err.error.code == "InvalidToken"){
-            TokenGen.getToken();
-            trys = ++trys;
-
-            if(trys > 5) return err;
-            getEngine(vehiculo, trys);
-        }
-    })
-    
+    .catch(err => (trys > 5 ? err : TokenGen.getToken() && getEngine(vehiculo, trys + 1)));
 }
 
 module.exports = {
-    getParts: async function(vehiculo, keyword){
-        let vehicleParams = getEngine(vehiculo);
+  async getParts(vehiculo, keyword) {
+    const vehicleParams = await getEngine(vehiculo);
 
-        console.log('parametros del vehiculo', vehicleParams);
-        let searchParams = {
-            vehicleParams: vehicleParams,
-            keyword: keyword
-        };
+    const searchParams = {
+      vehicleParams,
+      keyword,
+    };
 
-        console.log('Search serachParam', JSON.stringify({searchParams}));
-         return await fetch('https://api.beta.partstech.com/catalog/search', {
-            method: 'post',
-            body:    JSON.stringify({searchParams}),
-            headers: { 
-                'Content-Type': 'application/json',
-                "Authorization": `Bearer ${TokenGen.token}`
-            },
-        })
-        .then( json => {
-            console.log("This is my json example", json);
+    return fetch('https://api.beta.partstech.com/catalog/search', {
+      method: 'post',
+      body: JSON.stringify({ searchParams }),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${TokenGen.token}`,
+      },
+    })
+      .then(res => res.json())
+      .then((json) => {
+        if (!json.parts) {
+          return [];
+        }
+        const myResponseArray = json.parts.map(part => ({
+          partName: part.partName,
+          partsTechCatalogURL: part.partsTechCatalogURL,
+          brandName: part.brand.brandName,
+          vehicleName: part.vehicleName,
+        }));
 
-            if(json['parts'])
-            {
-                console.log("This is my json example", json);
-                let myResponseArray = json.parts.map( x => {
-                    return {
-                        partName: x.partName,
-                        partsTechCatalogURL: x.partsTechCatalogURL,
-                        brandName: x.brand.brandName,
-                        vehicleName: x.vehicleName
-                    }
-                });
-        
-                return myResponseArray;
-            }
-        })
-        .catch(err => {
-            console.err(`surgio un error, ${err.messagge}`);
-        })
-    },
-    
-    translatePart: async function(partName) {
-        let transText = partName;
+        return myResponseArray;
+      })
+      .catch(console.err);
+  },
 
-        return await translate(transText, {from: 'es', to: 'en'}).then(res => {
-           return res.text;
-        }).catch(err => {
-            console.error(err);
-        });
-    
-    }
-}
+  translatePart(partName) {
+    const transText = partName;
+
+    return translate(transText, { from: 'es', to: 'en' })
+      .then(res => res.text())
+      .catch(console.error);
+  },
+};
