@@ -28,6 +28,8 @@ app.post('/webhook', (req, res) => {
   console.log('Getting parts');
   const parts = getParts(vehicle, keyword);
 
+  console.log(parts);
+
   const textObjectResp = `Resultados para la pieza: ${parts[0].partName}. Vehiculo: ${
     parts[0].vehicleName
   }. Branch ${parts[0].branchName}`;
