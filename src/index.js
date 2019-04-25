@@ -12,7 +12,7 @@ app.use(morgan('tiny'));
 app.use(helmet());
 app.use(bodyParser.json());
 
-app.post('/webhook', (req, res) => {
+app.post('/webhook', async (req, res) => {
   console.log('Webhook activated');
   const { parameters: queryParams } = req.body.queryResult;
 
@@ -23,10 +23,10 @@ app.post('/webhook', (req, res) => {
   };
 
   console.log('Translating part');
-  const keyword = translatePart(queryParams['car-part']);
+  const keyword = await translatePart(queryParams['car-part']);
 
   console.log('Getting parts');
-  const parts = getParts(vehicle, keyword);
+  const parts = await getParts(vehicle, keyword);
 
   console.log(parts);
 
