@@ -12,21 +12,19 @@ app.use(bodyParser.json());
 
 app.post('/webhook', (req, res) => {
   const { parameters } = req.body.queryResult;
-  const link = 'hey.com';
 
   const response = {
     fulfillmentText: 'Hola',
     fulfillmentMessages: [
       {
         text: {
-          text: [link],
+          text: [parameters],
         },
       },
     ],
     source: '',
   };
 
-  console.log(parameters);
   res.json(response);
 });
 
