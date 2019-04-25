@@ -1,7 +1,8 @@
-var Token = require('./token');
-var fetch = require('node-fetch');
+const Token = require('./token');
+const fetch = require('node-fetch');
+const translate = require('translate-api');
 
-const TokenGen = new Token();
+var TokenGen = new Token();
 
 async function getEngine(vehiculo, trys){
     let VehiculoParams = {
@@ -67,4 +68,11 @@ async function getParts(vehiculo, keyword){
     })
 }
 
-module.exports = getParts;
+async function translatePart(partName) {
+    let transText = partName;
+    return await translate.getText(transText,{to: 'en-EN'}).then(function(text){
+        return text;
+    });
+
+}
+module.exports = getParts, translatePart;
