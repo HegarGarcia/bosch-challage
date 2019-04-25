@@ -53,6 +53,7 @@ module.exports = {
             },
         })
         .then( json =>{
+            console.log(json);
             let myResponseArray = json.parts.map( x => {
                 return {
                     partName: x.partName,

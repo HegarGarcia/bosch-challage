@@ -22,6 +22,8 @@ app.post('/webhook', (req, res) => {
     model: queryParams['car-model'],
     submodel: queryParams['car-submodel']
   };
+
+  console.log(vehicle, 'modelo:', vehicle.model)
   let keyword = queryParams['car-part'];
   keyword = translatePart(keyword);
   var arrayInfo = getParts(vehicle, keyword);
