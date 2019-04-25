@@ -1,6 +1,6 @@
 const Token = require('./token');
 const fetch = require('node-fetch');
-const translate = require('translate-api');
+const translate = require('google-translate-api');
 
 var TokenGen = new Token();
 
@@ -71,8 +71,11 @@ module.exports = {
     
     translatePart: async function(partName) {
         let transText = partName;
-        return await translate.getText(transText,{to: 'us-US'}).then(function(text){
-            return text;
+
+        return await translate(transText, {from: 'es', to: 'en'}).then(res => {
+           return res.text;
+        }).catch(err => {
+            console.error(err);
         });
     
     }
