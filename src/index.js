@@ -6,6 +6,8 @@ const helmet = require('helmet');
 const app = express();
 const port = process.env.PORT || 8080;
 
+const {getParts} = require(__dirname + './busquedas');
+
 app.use(morgan('tiny'));
 app.use(helmet());
 app.use(bodyParser.json());
@@ -15,6 +17,9 @@ app.post('/webhook', (req, res) => {
   console.log(req.body);
   const { parameters: queryParams } = req.body.queryResult;
 
+  var vehicle = {
+    
+  }
   const response = {
     fulfillmentText: '',
     fulfillmentMessages: [
